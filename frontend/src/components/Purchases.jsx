@@ -17,22 +17,22 @@ function Purchases() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Sidebar open state
 
   const navigate = useNavigate();
+    const user = JSON.parse(localStorage.getItem("user"));
+  const token = user.token;
 
   console.log("purchases: ", purchases);
 
   // Token handling
   useEffect(() => {
-    const token = localStorage.getItem("user");
+ 
     if (token) {
       setIsLoggedIn(true);
     } else {
       setIsLoggedIn(false);
     }
   }, []);
-  const user = JSON.parse(localStorage.getItem("user"));
-  const token = user.token;
+
   if (!token) {
-    toast.error("Please login to access your purchases");
     navigate("/login");
   }
 
