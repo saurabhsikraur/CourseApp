@@ -32,8 +32,8 @@ function Purchases() {
   const user = JSON.parse(localStorage.getItem("user"));
   const token = user.token;
   if (!token) {
+    toast.error("Please login to access your purchases");
     navigate("/login");
-    return;
   }
 
   // Fetch purchases
