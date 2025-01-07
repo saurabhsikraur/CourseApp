@@ -112,17 +112,17 @@ function Courses() {
             </li>
             <li>
               {isLoggedIn ? (
-                <a
-                  href="/"
+                <Link to={"/"}
+                  
                   className="flex items-center"
                   onClick={handleLogout}
                 >
                   <IoLogOut className="mr-2" /> Logout
-                </a>
+                </Link>
               ) : (
-                <a href="/login" className="flex items-center">
+                <Link to={"/login"} className="flex items-center">
                   <IoLogIn className="mr-2" /> Login
-                </a>
+                </Link>
               )}
             </li>
           </ul>
