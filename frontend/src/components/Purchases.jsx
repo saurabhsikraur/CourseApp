@@ -39,10 +39,6 @@ function Purchases() {
   // Fetch purchases
   useEffect(() => {
     const fetchPurchases = async () => {
-      if (!token) {
-        setErrorMessage("Please login to purchase the courses");
-        return;
-      }
       try {
         const response = await axios.get(`${BACKEND_URL}/user/purchases`, {
           headers: {
