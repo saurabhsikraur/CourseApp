@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import axios from "axios"; // Import axios for API call
 import { FaCircleUser } from "react-icons/fa6";
@@ -7,6 +8,7 @@ import { FaDownload } from "react-icons/fa6";
 import { IoMdSettings } from "react-icons/io";
 import { IoLogIn, IoLogOut } from "react-icons/io5";
 import { FiSearch } from "react-icons/fi";
+import { HiMenu, HiX } from "react-icons/hi"; // Import menu and close icons
 import logo from "../../public/logo.webp";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
@@ -16,9 +18,11 @@ function Courses() {
   const [courses, setCourses] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State to toggle sidebar
 
   console.log("courses: ", courses);
-  // token
+
+  // Check token
   useEffect(() => {
     const token = localStorage.getItem("user");
     if (token) {
@@ -28,7 +32,7 @@ function Courses() {
     }
   }, []);
 
-  // fetch courses
+  // Fetch courses
   useEffect(() => {
     const fetchCourses = async () => {
       try {
@@ -45,7 +49,7 @@ function Courses() {
     fetchCourses();
   }, []);
 
-  // logout
+  // Logout
   const handleLogout = async () => {
     try {
       const response = await axios.get(`${BACKEND_URL}/user/logout`, {
@@ -60,45 +64,50 @@ function Courses() {
     }
   };
 
+  // Toggle sidebar for mobile devices
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   return (
     <div className="flex">
+      {/* Hamburger menu button for mobile */}
+      <button
+        className="md:hidden fixed top-4 left-4 z-20 text-3xl text-gray-800"
+        onClick={toggleSidebar}
+      >
+        {isSidebarOpen ? <HiX /> : <HiMenu />} {/* Toggle menu icon */}
+      </button>
+
       {/* Sidebar */}
-      <aside className="w-64 bg-gray-100 h-screen p-5 fixed">
-        <div className="flex items-center mb-10">
+      <aside
+        className={`fixed top-0 left-0 h-screen bg-gray-100 w-64 p-5 transform z-10 transition-transform duration-300 ease-in-out ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } md:translate-x-0 md:static`}
+      >
+        <div className="flex items-center mb-10 mt-10 md:mt-0">
           <img src={logo} alt="Profile" className="rounded-full h-12 w-12" />
         </div>
         <nav>
           <ul>
             <li className="mb-4">
               <a href="/" className="flex items-center">
-                <span className="material-icons mr-2">
-                  <RiHome2Fill />
-                </span>{" "}
-                Home
+                <RiHome2Fill className="mr-2" /> Home
               </a>
             </li>
             <li className="mb-4">
               <a href="#" className="flex items-center text-blue-500">
-                <span className="material-icons mr-2">
-                  <FaDiscourse />
-                </span>{" "}
-                Courses
+                <FaDiscourse className="mr-2" /> Courses
               </a>
             </li>
             <li className="mb-4">
               <a href="/purchases" className="flex items-center">
-                <span className="material-icons mr-2">
-                  <FaDownload />
-                </span>{" "}
-                Purchases
+                <FaDownload className="mr-2" /> Purchases
               </a>
             </li>
             <li className="mb-4">
               <a href="#" className="flex items-center">
-                <span className="material-icons mr-2">
-                  <IoMdSettings />
-                </span>{" "}
-                Settings
+                <IoMdSettings className="mr-2" /> Settings
               </a>
             </li>
             <li>
@@ -108,20 +117,12 @@ function Courses() {
                   className="flex items-center"
                   onClick={handleLogout}
                 >
-                  <span className="mr-2">
-                    <IoLogOut />
-                  </span>{" "}
-                  Logout
+                  <IoLogOut className="mr-2" /> Logout
                 </a>
               ) : (
-                <>
-                  <a href="/login" className="flex items-center">
-                    <span className="mr-2">
-                      <IoLogIn />
-                    </span>{" "}
-                    Login
-                  </a>
-                </>
+                <a href="/login" className="flex items-center">
+                  <IoLogIn className="mr-2" /> Login
+                </a>
               )}
             </li>
           </ul>
@@ -129,7 +130,7 @@ function Courses() {
       </aside>
 
       {/* Main content */}
-      <main className="ml-[20%] w-[80%] bg-white p-10">
+      <main className="ml-0 md:ml-64 w-full bg-white p-10">
         <header className="flex justify-between items-center mb-10">
           <h1 className="text-xl font-bold">Courses</h1>
           <div className="flex items-center space-x-3">
@@ -152,7 +153,8 @@ function Courses() {
         <div className="overflow-y-auto h-[75vh]">
           {loading ? (
             <p className="text-center text-gray-500">Loading...</p>
-          ) : courses.length === 0 ? ( // Check if courses array is empty
+          ) : courses.length === 0 ? (
+            // Check if courses array is empty
             <p className="text-center text-gray-500">
               No course posted yet by admin
             </p>
