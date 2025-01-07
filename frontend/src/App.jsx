@@ -29,8 +29,13 @@ function App() {
         <Route path="/buy/:courseId" element={<Buy />} />
         <Route
           path="/purchases"
-          element={user ? <Purchases /> : <Navigate to={"/login"} />}
+          element={<Purchases/>}
         />
+{/*         you can use below one if required 
+ <Route
+          path="/purchases"
+          element={user ? <Purchases /> : <Navigate to={"/login"} />}
+        />*/}
 
         {/* Admin Routes */}
         <Route path="/admin/signup" element={<AdminSignup />} />
