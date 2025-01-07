@@ -1,3 +1,4 @@
+
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -5,36 +6,41 @@ import { FaDiscourse, FaDownload } from "react-icons/fa";
 import { IoMdSettings } from "react-icons/io";
 import { IoLogIn, IoLogOut } from "react-icons/io5";
 import { RiHome2Fill } from "react-icons/ri";
+import { HiMenu, HiX } from "react-icons/hi"; // Icons for sidebar toggle
 import { Link, useNavigate } from "react-router-dom";
 import { BACKEND_URL } from "../utils/utils";
+
 function Purchases() {
   const [purchases, setPurchase] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [errorMessage, setErrorMessage] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Sidebar open state
 
   const navigate = useNavigate();
 
   console.log("purchases: ", purchases);
-  // token
+
+  // Token handling
   useEffect(() => {
-    const user = localStorage.getItem("user");
-    if (user) {
+    const token = localStorage.getItem("user");
+    if (token) {
       setIsLoggedIn(true);
     } else {
       setIsLoggedIn(false);
     }
   }, []);
-  
- 
+  const user = JSON.parse(localStorage.getItem("user"));
+  const token = user.token;
+  if (!token) {
+    navigate("/login");
+    return;
+  }
 
-  // fetch courses
+  // Fetch purchases
   useEffect(() => {
     const fetchPurchases = async () => {
-      const user = JSON.parse(localStorage.getItem("user"));
-  const token = user.token;
       if (!token) {
         setErrorMessage("Please login to purchase the courses");
-            navigate("/login");
         return;
       }
       try {
@@ -52,7 +58,7 @@ function Purchases() {
     fetchPurchases();
   }, []);
 
-  // logout
+  // Logout
   const handleLogout = async () => {
     try {
       const response = await axios.get(`${BACKEND_URL}/user/logout`, {
@@ -68,12 +74,21 @@ function Purchases() {
     }
   };
 
+  // Toggle sidebar visibility
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
-      <div className="w-64 bg-gray-100 p-5">
+      <div
+        className={`fixed inset-y-0 left-0 bg-gray-100 p-5 transform ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } md:translate-x-0 transition-transform duration-300 ease-in-out w-64 z-50`}
+      >
         <nav>
-          <ul>
+          <ul className="mt-16 md:mt-0">
             <li className="mb-4">
               <Link to="/" className="flex items-center">
                 <RiHome2Fill className="mr-2" /> Home
@@ -109,9 +124,27 @@ function Purchases() {
         </nav>
       </div>
 
+      {/* Sidebar Toggle Button (Mobile) */}
+      <button
+        className="fixed top-4 left-4 z-50 md:hidden bg-blue-600 text-white p-2 rounded-lg"
+        onClick={toggleSidebar}
+      >
+        {isSidebarOpen ? (
+          <HiX className="text-2xl" />
+        ) : (
+          <HiMenu className="text-2xl" />
+        )}
+      </button>
+
       {/* Main Content */}
-      <div className="flex-1 p-8 bg-gray-50">
-        <h2 className="text-xl font-semibold mb-6">My Purchases</h2>
+      <div
+        className={`flex-1 p-8 bg-gray-50 transition-all duration-300 ${
+          isSidebarOpen ? "ml-64" : "ml-0"
+        } md:ml-64`}
+      >
+        <h2 className="text-xl font-semibold mt-6 md:mt-0 mb-6">
+          My Purchases
+        </h2>
 
         {/* Error message */}
         {errorMessage && (
