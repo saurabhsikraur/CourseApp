@@ -18,7 +18,7 @@ function Purchases() {
 
   const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem("user"));
-  const token = user.token;
+  const token = user?.token; // using optional chaining to avoid app crashing
 
   console.log("purchases: ", purchases);
 
