@@ -25,7 +25,8 @@ function Buy() {
       if (!token) {
         toast.error("Please login to buy the course")
         setError("Please login to purchase the courses");
-        return;
+        navigate("/login")
+        
       }
       try {
         const response = await axios.post(
