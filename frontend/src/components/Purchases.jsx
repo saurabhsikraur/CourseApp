@@ -24,18 +24,17 @@ function Purchases() {
       setIsLoggedIn(false);
     }
   }, []);
-  const user = JSON.parse(localStorage.getItem("user"));
-  const token = user.token;
-  if (!token) {
-    navigate("/login");
-    return;
-  }
+  
+ 
 
   // fetch courses
   useEffect(() => {
     const fetchPurchases = async () => {
+      const user = JSON.parse(localStorage.getItem("user"));
+  const token = user.token;
       if (!token) {
         setErrorMessage("Please login to purchase the courses");
+            navigate("/login");
         return;
       }
       try {
