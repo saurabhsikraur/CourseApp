@@ -58,13 +58,13 @@ function Signup() {
           <div className="flex items-center space-x-4">
             <Link
               to={"/login"}
-              className="bg-transparent border border-gray-500 py-2 px-4 rounded-md"
+              className="bg-transparent border border-gray-500 p-1 text-sm md:text-md md:py-2 md:px-4 rounded-md"
             >
               Login
             </Link>
             <Link
               to={"/courses"}
-              className="bg-orange-500 py-2 px-4 rounded-md"
+              className="bg-orange-500 p-1 text-sm md:text-md md:py-2 md:px-4 rounded-md"
             >
               Join now
             </Link>
