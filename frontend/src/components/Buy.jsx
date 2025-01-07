@@ -20,14 +20,12 @@ function Buy() {
   const elements = useElements();
   const [cardError, setCardError] = useState("");
 
+  if (!token) {
+    navigate("/login");
+  }
+
   useEffect(() => {
     const fetchBuyCourseData = async () => {
-      if (!token) {
-        toast.error("Please login to buy the course")
-        setError("Please login to purchase the courses");
-        navigate("/login")
-        
-      }
       try {
         const response = await axios.post(
           `${BACKEND_URL}/course/buy/${courseId}`,
