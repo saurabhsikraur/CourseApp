@@ -14,7 +14,7 @@ function Buy() {
   const [error, setError] = useState("");
 
   const user = JSON.parse(localStorage.getItem("user"));
-  const token = user.token;
+  const token = user?.token;  //using optional chaining to avoid crashing incase token is not there!!!
 
   const stripe = useStripe();
   const elements = useElements();
