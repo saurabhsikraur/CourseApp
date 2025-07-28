@@ -49,37 +49,79 @@ export const signup = async (req, res) => {
   }
 };
 
+// export const login = async (req, res) => {
+//   const { email, password } = req.body;
+//   try {
+//     const user = await User.findOne({ email: email });
+//     const isPasswordCorrect = await bcrypt.compare(password, user.password);
+
+//     if (!user || !isPasswordCorrect) {
+//       return res.status(403).json({ errors: "Invalid credentials" });
+//     }
+
+//     // jwt code
+//     const token = jwt.sign(
+//       {
+//         id: user._id,
+//       },
+//       config.JWT_USER_PASSWORD,
+//       { expiresIn: "1d" }
+//     );
+//     const cookieOptions = {
+//       expires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 1 day
+//       httpOnly: true, //  can't be accsed via js directly
+//       secure: process.env.NODE_ENV === "production", // true for https only
+//       sameSite: "Strict", // CSRF attacks
+//     };
+//     res.cookie("jwt", token, cookieOptions);
+//     res.status(201).json({ message: "Login successful", user, token });
+//   } catch (error) {
+//     res.status(500).json({ errors: "Error in login" });
+//     console.log("error in login", error);
+//   }
+// };
+
 export const login = async (req, res) => {
   const { email, password } = req.body;
-  try {
-    const user = await User.findOne({ email: email });
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
-    if (!user || !isPasswordCorrect) {
-      return res.status(403).json({ errors: "Invalid credentials" });
+  try {
+    // 1️⃣ Find user first
+    const user = await User.findOne({ email: email });
+
+    if (!user) {
+      return res.status(403).json({ errors: "User not found" });
     }
 
-    // jwt code
+    // 2️⃣ Password check only if user exists
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordCorrect) {
+      return res.status(403).json({ errors: "Invalid password" });
+    }
+
+    // 3️⃣ JWT creation
     const token = jwt.sign(
-      {
-        id: user._id,
-      },
-      config.JWT_USER_PASSWORD,
+      { id: user._id },
+      config.JWT_USER_PASSWORD || "defaultsecret", // fallback
       { expiresIn: "1d" }
     );
+
     const cookieOptions = {
       expires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 1 day
-      httpOnly: true, //  can't be accsed via js directly
-      secure: process.env.NODE_ENV === "production", // true for https only
-      sameSite: "Strict", // CSRF attacks
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Strict",
     };
+
     res.cookie("jwt", token, cookieOptions);
-    res.status(201).json({ message: "Login successful", user, token });
+    res.status(200).json({ message: "Login successful", user, token });
   } catch (error) {
-    res.status(500).json({ errors: "Error in login" });
-    console.log("error in login", error);
+    console.log("Error in login:", error);
+    res.status(500).json({ errors: "Internal Server Error" });
   }
 };
+
+
 
 export const logout = (req, res) => {
   try {

@@ -11,7 +11,7 @@
   "keywords": [
     "course-app"
   ],
-  "author": "Akhil K",
+  "author": "Saurabh",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",

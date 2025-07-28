@@ -6,7 +6,7 @@ import { Admin } from "../models/admin.model.js";
 
 export const signup = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
-
+  const normalizedEmail = email.toLowerCase();
   const adminSchema = z.object({
     firstName: z
       .string()
@@ -37,7 +37,7 @@ export const signup = async (req, res) => {
     const newAdmin = new Admin({
       firstName,
       lastName,
-      email,
+      email:normalizedEmail,
       password: hashedPassword,
     });
     await newAdmin.save();
@@ -48,37 +48,81 @@ export const signup = async (req, res) => {
   }
 };
 
-export const login = async (req, res) => {
-  const { email, password } = req.body;
-  try {
-    const admin = await Admin.findOne({ email: email });
-    const isPasswordCorrect = await bcrypt.compare(password, admin.password);
+// export const login = async (req, res) => {
 
-    if (!admin || !isPasswordCorrect) {
-      return res.status(403).json({ errors: "Invalid credentials" });
+//   const { email, password } = req.body;
+//   try {
+//     const admin = await Admin.findOne({ email: email });
+//     const isPasswordCorrect = await bcrypt.compare(password, admin.password);
+
+//     if (!admin || !isPasswordCorrect) {
+//       return res.status(403).json({ errors: "Invalid credentials" });
+//     }
+
+//     // jwt code
+//     const token = jwt.sign(
+//       {
+//         id: admin._id,
+//       },
+//       config.JWT_ADMIN_PASSWORD,
+//       { expiresIn: "1d" }
+//     );
+//     const cookieOptions = {
+//       expires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 1 day
+//       httpOnly: true, //  can't be accsed via js directly
+//       secure: process.env.NODE_ENV === "production", // true for https only
+//       sameSite: "Strict", // CSRF attacks
+//     };
+//     res.cookie("jwt", token, cookieOptions);
+//     res.status(201).json({ message: "Login successful", admin, token });
+//   } catch (error) {
+//     res.status(500).json({ errors: "Error in login" });
+//     console.log("error in login", error);
+//   }
+// };
+
+export const login = async (req, res) => {
+  let { email, password } = req.body;
+  email = email.toLowerCase(); // ✅ Convert to lowercase before query
+
+  try {
+    // Find admin
+    const admin = await Admin.findOne({ email });
+
+    if (!admin) {
+      return res
+        .status(403)
+        .json({ errors: "Invalid credentials (email not found)" });
     }
 
-    // jwt code
-    const token = jwt.sign(
-      {
-        id: admin._id,
-      },
-      config.JWT_ADMIN_PASSWORD,
-      { expiresIn: "1d" }
-    );
+    const isPasswordCorrect = await bcrypt.compare(password, admin.password);
+
+    if (!isPasswordCorrect) {
+      return res
+        .status(403)
+        .json({ errors: "Invalid credentials (wrong password)" });
+    }
+
+    const token = jwt.sign({ id: admin._id }, config.JWT_ADMIN_PASSWORD, {
+      expiresIn: "1d",
+    });
+
     const cookieOptions = {
-      expires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 1 day
-      httpOnly: true, //  can't be accsed via js directly
-      secure: process.env.NODE_ENV === "production", // true for https only
-      sameSite: "Strict", // CSRF attacks
+      expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Strict",
     };
+
     res.cookie("jwt", token, cookieOptions);
-    res.status(201).json({ message: "Login successful", admin, token });
+    res.status(200).json({ message: "Login successful", admin, token });
   } catch (error) {
-    res.status(500).json({ errors: "Error in login" });
     console.log("error in login", error);
+    res.status(500).json({ errors: "Internal Server Error" });
   }
 };
+
+
 
 export const logout = (req, res) => {
   try {

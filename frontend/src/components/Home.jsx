@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import logo from "../../public/logo.webp";
+import logo from "../assets/logo.webp";
 import { Link } from "react-router-dom";
 import { FaFacebook } from "react-icons/fa";
 import { FaTwitter } from "react-icons/fa";
@@ -165,10 +165,11 @@ function Home() {
                 <div className="relative flex-shrink-0 w-92 transition-transform duration-300 transform hover:scale-105">
                   <div className="bg-gray-900 rounded-lg overflow-hidden">
                     <img
-                      className="h-32 w-full object-contain"
-                      src={course.image.url}
-                      alt=""
+                       className="h-32 w-full object-contain"
+                       src={course.image?.url || "https://via.placeholder.com/300x100?text=No+Image"}
+                        alt="course"
                     />
+
                     <div className="p-6 text-center">
                       <h2 className="text-xl font-bold text-white">
                         {course.title}
