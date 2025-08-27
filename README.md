@@ -22,3 +22,8 @@ Frontend: React.js, Redux/Context API, Tailwind CSS
 Backend: Node.js, Express.js
 Database: MongoDB
 Payments: Stripe API
+
+
+Screen Shot-
+
+<img width="1912" height="865" alt="Image" src="https://github.com/user-attachments/assets/36fb003f-3066-449b-afdc-c8bf025915eb" />
