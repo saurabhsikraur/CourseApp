@@ -26,4 +26,4 @@ Payments: Stripe API
 
 Screen Shot-
 
-<img width="1912" height="865" alt="Image" src="https://github.com/user-attachments/assets/36fb003f-3066-449b-afdc-c8bf025915eb" />
+<img width="1905" height="862" alt="Image" src="https://github.com/user-attachments/assets/ebe84f16-6f2a-4ef2-8e69-bf19c936fe5b" />
